@@ -36,7 +36,41 @@ const schema = {
           { key: "55", text: "China" },
           { key: "74", text: "Egypt" },
           { key: "84", text: "France" },
+          { key: "20", text: "Australia" },
         ],
+      },
+    },
+    {
+      type: "FieldSelect",
+      props: {
+        name: "countryOfOnboarding",
+        label: "Country/Region of Onboarding",
+        options: [
+          { key: "--", text: "Please select" },
+          { key: "55", text: "China" },
+          { key: "74", text: "Egypt" },
+          { key: "84", text: "France" },
+          { key: "20", text: "Australia" },
+        ],
+        derivedPropsDef: {
+          args: [
+            {
+              name: "country",
+              type: "Input",
+              path: "country",
+              accessLevel: "private",
+            },
+            {
+              name: "titleId",
+              type: "Input",
+              path: "titleId",
+              accessLevel: "private",
+            },
+          ],
+          computed: {
+            value: "titleId == '04' ? country : '20'",
+          },
+        },
       },
     },
     {

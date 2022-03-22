@@ -29,29 +29,38 @@ class Field extends Component {
 
   onStoreChange = (keys) => {
     const { name } = this.props;
-    const { getFieldValue, delFieldValue } = this.context;
+    const { getFieldValue, delFieldValue, setFieldsValue } = this.context;
 
     let isRequiredToUpdate = false;
     if (R.includes(name, keys)) {
       isRequiredToUpdate = true;
     }
 
-    const { nextState, hasDiff } = this.derivedPropsResolver.synDerivedProps(
+    const { curState, hasDiff } = this.derivedPropsResolver.synDerivedProps(
       this.props
     );
+    if (
+      curState.value !== undefined &&
+      curState.value !== getFieldValue(name)
+    ) {
+      setFieldsValue({
+        [name]: curState.value,
+      });
+      return;
+    }
 
     isRequiredToUpdate = isRequiredToUpdate || hasDiff;
 
     if (isRequiredToUpdate === false) {
       return;
     }
-    this.setDerivedProps(nextState);
+    this.setDerivedProps(curState);
 
     /**
      * clean up input value
      */
     const fieldValue = getFieldValue(name);
-    const isRequiredToRender = nextState["renderIf"];
+    const isRequiredToRender = curState["renderIf"];
     if (fieldValue !== undefined && isRequiredToRender === false) {
       delFieldValue(this);
     }
