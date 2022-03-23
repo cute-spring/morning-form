@@ -9,9 +9,9 @@ schema.children = [
   {
     type: "FieldInput",
     props: {
-      name: "bankName",
-      label: "Bank Name",
-      placeholder: "Bank Name",
+      name: "userName",
+      label: "User Name",
+      placeholder: "David Lee",
     },
   },
   ...schema.children,

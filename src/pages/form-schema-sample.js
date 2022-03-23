@@ -21,9 +21,18 @@ const schema = {
     {
       type: "FieldInput",
       props: {
-        name: "custName",
-        label: "Customer Name",
-        placeholder: "Customer Name",
+        name: "email",
+        label: "Email",
+        placeholder: "abc@xx.com",
+      },
+      validate: {},
+    },
+    {
+      type: "FieldInput",
+      props: {
+        name: "age",
+        label: "Age",
+        placeholder: "18",
       },
     },
     {
@@ -160,6 +169,7 @@ const schema = {
     },
     {
       type: "Button",
+      displayName: "SubmitButton",
       props: {
         name: "Submit",
       },
