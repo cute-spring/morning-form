@@ -1,24 +1,5 @@
 import { FormStore } from "../components/my-field-form";
-import * as yup from "yup";
-
-const validationSchema = yup.object().shape({
-  email: yup.string().email("Invalid email").required("Field is required"),
-  username: yup
-    .string()
-    .min(4, "Must be at least 4 characters")
-    .required("Field is required"),
-  password: yup
-    .string()
-    .required("Password is required")
-    .min(6, "Password is too short - should be 6 chars minimum"),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref("password"), null], "Passwords must match"),
-  age: yup
-    .number()
-    .min(15, "You need to be older than 15 to register")
-    .required(),
-});
+import validationSchema from "./validationSchema";
 
 const formStore = new FormStore();
 const form = formStore.getForm();
@@ -29,26 +10,8 @@ const schema = {
     form: form,
     validationSchema,
     // ref：this.formRef,
-    onFinish: async (val) => {
+    onFinish: (val) => {
       console.log("onFinish", val, null, "\t"); //sy-log
-      try {
-        await validationSchema.validate(
-          {
-            username: "gavin",
-            age: 2,
-            email: "sdf",
-            password: "111111",
-            confirmPassword: "123",
-          },
-          {
-            abortEarly: false,
-          }
-        );
-      } catch (err) {
-        // err.name; // => 'ValidationError'
-        // err.errors; // => ['Deve ser maior que 18']
-        console.error(err);
-      }
     },
     onFinishFailed: (val) => {
       console.log("onFinishFailed", val); //sy-log

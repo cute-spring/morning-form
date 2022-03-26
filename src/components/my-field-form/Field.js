@@ -38,12 +38,13 @@ class Field extends Component {
     const { curState, hasDiff } = this.derivedPropsResolver.synDerivedProps(
       this.props
     );
+    const currentComputedValue = curState?.value;
     if (
-      curState.value !== undefined &&
-      curState.value !== getFieldValue(name)
+      currentComputedValue !== undefined &&
+      currentComputedValue !== getFieldValue(name)
     ) {
       setFieldsValue({
-        [name]: curState.value,
+        [name]: currentComputedValue,
       });
       return;
     }
@@ -57,7 +58,7 @@ class Field extends Component {
      * clean up input value
      */
     const fieldValue = getFieldValue(name);
-    const isRequiredToRender = curState["renderIf"];
+    const isRequiredToRender = curState?.renderIf;
     if (fieldValue !== undefined && isRequiredToRender === false) {
       delFieldValue(this);
     }
@@ -90,7 +91,7 @@ class Field extends Component {
   render() {
     const derivedProps = this.getDerivedProps();
     if (derivedProps == null) {
-      //for the first time, that the derivedPropsResolver hasn't been initialized.
+      //for the first time, that the derivedPropsResolver has been initialized.
       console.log("render null for '%s'", this.props.name);
       return null;
     }

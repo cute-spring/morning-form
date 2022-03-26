@@ -14,7 +14,7 @@ export interface Meta {
 export interface FieldData extends Meta {
   value: StoreValue;
 }
-
+export type DerivedProps = any;
 export interface FormInstance {
   getFieldValue: (name: NamePath) => StoreValue;
   delFieldValue: (name: NamePath) => void;
@@ -23,6 +23,9 @@ export interface FormInstance {
   //   setFieldEntities: this.setFieldEntities,
   //   setCallbacks: this.setCallbacks,
   //   submit: this.submit,
+  setDerivedProps: (key: string, derivedProps: DerivedProps) => void;
+  getDerivedProps: (key: string) => DerivedProps;
+  getMeta: (key: string) => Meta;
 }
 
 /**

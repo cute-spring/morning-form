@@ -11,6 +11,9 @@ export class FormStore {
     this.callbacks = {};
 
     this.observers = [];
+
+    this.derivedPropsByKey = {};
+    this.metaByKey = {};
   }
 
   register = (observer) => {
@@ -98,9 +101,16 @@ export class FormStore {
       onFinish(this.getFieldsValue());
     }
   };
-
+  setDerivedProps = (__key__, state) => {
+    this.derivedPropsByKey[__key__] = state;
+  };
+  getDerivedProps = (__key__) => {
+    return this.derivedPropsByKey[__key__];
+  };
   getForm = () => {
     return {
+      setDerivedProps: this.setDerivedProps,
+      getDerivedProps: this.getDerivedProps,
       delFieldValue: this.delFieldValue,
       getFieldValue: this.getFieldValue,
       getFieldsValue: this.getFieldsValue,

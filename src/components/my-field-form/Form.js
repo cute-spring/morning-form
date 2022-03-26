@@ -3,7 +3,7 @@ import useForm from "./useForm";
 import FieldContext from "./FieldContext";
 
 export default function Form(
-  { form, children, onFinish, onFinishFailed },
+  { form, children, onFinish, onFinishFailed, validationSchema },
   ref
 ) {
   const [formInstance] = useForm(form);
