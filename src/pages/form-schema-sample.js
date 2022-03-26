@@ -1,6 +1,24 @@
 import { FormStore } from "../components/my-field-form";
-const nameRules = { required: true, message: "请输入姓名！" };
-const passworRules = { required: true, message: "请输入密码！" };
+import * as yup from "yup";
+
+const validationSchema = yup.object().shape({
+  email: yup.string().email("Invalid email").required("Field is required"),
+  username: yup
+    .string()
+    .min(4, "Must be at least 4 characters")
+    .required("Field is required"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(6, "Password is too short - should be 6 chars minimum"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match"),
+  age: yup
+    .number()
+    .min(15, "You need to be older than 15 to register")
+    .required(),
+});
 
 const formStore = new FormStore();
 const form = formStore.getForm();
@@ -9,9 +27,28 @@ const schema = {
   type: "Form",
   props: {
     form: form,
+    validationSchema,
     // ref：this.formRef,
-    onFinish: (val) => {
+    onFinish: async (val) => {
       console.log("onFinish", val, null, "\t"); //sy-log
+      try {
+        await validationSchema.validate(
+          {
+            username: "gavin",
+            age: 2,
+            email: "sdf",
+            password: "111111",
+            confirmPassword: "123",
+          },
+          {
+            abortEarly: false,
+          }
+        );
+      } catch (err) {
+        // err.name; // => 'ValidationError'
+        // err.errors; // => ['Deve ser maior que 18']
+        console.error(err);
+      }
     },
     onFinishFailed: (val) => {
       console.log("onFinishFailed", val); //sy-log
@@ -119,7 +156,6 @@ const schema = {
         name: "password",
         label: "password",
         placeholder: "password",
-        rules: [passworRules],
         derivedPropsDef: {
           args: [
             {
@@ -143,10 +179,17 @@ const schema = {
     {
       type: "FieldInput",
       props: {
+        name: "confirmPassword",
+        label: "confirm password",
+        placeholder: "password",
+      },
+    },
+    {
+      type: "FieldInput",
+      props: {
         name: "username",
         label: "username",
         placeholder: "username",
-        rules: [nameRules],
         derivedPropsDef: {
           args: [
             {
