@@ -2,7 +2,29 @@ import produce from "immer";
 const jexl = require("jexl");
 
 const derivedPropsByKey = {};
-
+const metaByKey = {};
+/**
+export interface Meta {
+  touched: boolean;
+  validating: boolean;
+  errors: string[];
+  name: InternalNamePath;
+}
+ */
+const setDerivedProps = (__key__, state) => {
+  derivedPropsByKey[__key__] = state;
+};
+const getDerivedProps = (__key__) => {
+  derivedPropsByKey[__key__] = derivedPropsByKey[__key__] || {};
+  return derivedPropsByKey[__key__];
+};
+const setMeta = (__key__, state) => {
+  metaByKey[__key__] = state;
+};
+const getMeta = (__key__) => {
+  metaByKey[__key__] = metaByKey[__key__] || {};
+  return metaByKey[__key__];
+};
 const generateArgsContext = (args = [], getFieldValue) => {
   const argsCtx = {};
   args.forEach((item) => {
@@ -32,27 +54,27 @@ function getCurState(prevState, derivedPropsDef, getFieldValue) {
     }
   });
 }
+
 function DerivedPropsResolver({ getFieldValue }) {
   return {
     synDerivedProps: (props) => {
       const { derivedPropsDef, name, __key__ } = props;
-      derivedPropsByKey[__key__] = derivedPropsByKey[__key__] || {};
-      const prevState = derivedPropsByKey[__key__];
+      const prevState = getDerivedProps(__key__);
       let curState = prevState;
       let hasDiff = false;
       if (derivedPropsDef !== undefined) {
-        console.group("derivedPropsDef - [%s] - [%s]", name, __key__);
         curState = getCurState(prevState, derivedPropsDef, getFieldValue);
         hasDiff = prevState !== curState;
-        derivedPropsByKey[__key__] = curState;
-        console.log({ curState, prevState, hasDiff });
-        console.groupEnd("derivedPropsDef - [%s] - [%s]", name, __key__);
+        if (hasDiff) {
+          setDerivedProps(__key__, curState);
+          console.group("derivedPropsDef - [%s] - [%s]", name, __key__);
+          console.log({ curState, prevState, hasDiff });
+          console.groupEnd("derivedPropsDef - [%s] - [%s]", name, __key__);
+        }
       }
       return { curState, prevState, hasDiff };
     },
-    getDerivedProps: (__key__) => {
-      return derivedPropsByKey[__key__];
-    },
+    getCurrentDerivedProps: (__key__) => getDerivedProps(__key__),
   };
 }
 export default DerivedPropsResolver;

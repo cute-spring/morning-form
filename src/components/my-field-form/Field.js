@@ -7,7 +7,6 @@ import DerivedPropsResolver from "./DerivedPropsResolver";
 class Field extends Component {
   static contextType = FieldContext;
 
-  derivedProps = null;
   derivedPropsResolver = null;
   // constructor(props) {
   //   super(props);
@@ -54,8 +53,6 @@ class Field extends Component {
     if (isRequiredToUpdate === false) {
       return;
     }
-    this.setDerivedProps(curState);
-
     /**
      * clean up input value
      */
@@ -70,15 +67,9 @@ class Field extends Component {
     }
   };
 
-  getDerivedProp = (propName) => {
-    return this.derivedProps[propName];
-  };
-  setDerivedProps = (newProps) => {
-    this.derivedProps = newProps;
-  };
-  getDerivedProps = () => {
-    return this.derivedProps;
-  };
+  getDerivedProps = () =>
+    this.derivedPropsResolver?.getCurrentDerivedProps(this.props.__key__) ||
+    null;
 
   getControlled = () => {
     const { name, rule, children, derivedPropsDef, ...restProps } = this.props;
@@ -99,6 +90,7 @@ class Field extends Component {
   render() {
     const derivedProps = this.getDerivedProps();
     if (derivedProps == null) {
+      //for the first time, that the derivedPropsResolver hasn't been initialized.
       console.log("render null for '%s'", this.props.name);
       return null;
     }
