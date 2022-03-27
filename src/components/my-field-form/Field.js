@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import FieldContext from "./FieldContext";
-import * as R from "ramda";
 import DerivedPropsResolver from "./DerivedPropsResolver";
+var _ = require("lodash");
 // const jexl = require("jexl");
 
 class Field extends Component {
@@ -31,7 +31,7 @@ class Field extends Component {
     const { getFieldValue, delFieldValue, setFieldsValue } = this.context;
 
     let isRequiredToUpdate = false;
-    if (R.includes(name, keys)) {
+    if (_.includes(keys, name)) {
       isRequiredToUpdate = true;
     }
 
