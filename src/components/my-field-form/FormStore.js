@@ -1,8 +1,9 @@
+import produce from "immer";
+const _ = require("lodash");
 // store 状态管理库
 export class FormStore {
   constructor() {
-    // 开辟一个空间存储我的状态 {} store
-    this.store = {};
+    this.storeRef = { ref: {} };
 
     // 开辟一个空间存储Fields
     this.fieldEntities = [];
@@ -38,41 +39,37 @@ export class FormStore {
 
     return () => {
       this.fieldEntities = this.fieldEntities.filter((item) => item !== entity);
-      // delete this.store[entity.props.name];
     };
   };
 
   delFieldValue = (entity) => {
     const propName = entity.props.name;
-    delete this.store[propName];
-    this.notify([propName]);
+    const prevState = this.storeRef.ref;
+    const curState = produce(prevState, (draft) => {
+      _.set(draft, propName, null);
+    });
+    this.storeRef.ref = curState;
+    this.notify(propName);
   };
 
-  // get 获取全部状态
   getFieldsValue = () => {
-    return { ...this.store };
+    return this.storeRef.ref;
   };
 
-  // 获取单个状态
   getFieldValue = (name) => {
-    return this.store[name];
+    return _.get(this.storeRef.ref, name);
   };
 
-  // set  设置状态
-  //old {username: '123', password: 456}
-  // new {usernmae:'1234'}
-  setFieldsValue = (newStore) => {
-    // 1. 更新store
-    this.store = {
-      ...this.store,
-      ...newStore,
-    };
-    console.log("this.store", this.store); //sy-log
-
-    // 2. 更新组件
-    // todo
-    const keys = Object.keys(newStore);
-    this.notify(keys);
+  setFieldValue = (name, value) => {
+    const prevState = this.storeRef.ref;
+    const curState = produce(prevState, (draft) => {
+      _.set(draft, name, value);
+    });
+    this.storeRef.ref = curState;
+    if (prevState !== curState) {
+      //TODO:
+      this.notify(name);
+    }
   };
 
   notify = (keys) => {
@@ -114,7 +111,7 @@ export class FormStore {
       delFieldValue: this.delFieldValue,
       getFieldValue: this.getFieldValue,
       getFieldsValue: this.getFieldsValue,
-      setFieldsValue: this.setFieldsValue,
+      setFieldValue: this.setFieldValue,
       setFieldEntities: this.setFieldEntities,
       setCallbacks: this.setCallbacks,
       submit: this.submit,

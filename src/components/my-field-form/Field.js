@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import FieldContext from "./FieldContext";
 import DerivedPropsResolver from "./DerivedPropsResolver";
-var _ = require("lodash");
+const _ = require("lodash");
 // const jexl = require("jexl");
 
 class Field extends Component {
@@ -26,84 +26,86 @@ class Field extends Component {
     }
   }
 
-  onStoreChange = (keys) => {
-    const { name } = this.props;
-    const { getFieldValue, delFieldValue, setFieldsValue } = this.context;
+  onStoreChange = (nameOfChangedField) => {
+    const { name, derivedPropsDef } = this.props;
+    const { getFieldValue, delFieldValue, setFieldValue } = this.context;
 
     let isRequiredToUpdate = false;
-    if (_.includes(keys, name)) {
+    if (nameOfChangedField === name) {
       isRequiredToUpdate = true;
     }
 
-    const { curState, hasDiff } = this.derivedPropsResolver.synDerivedProps(
-      this.props
-    );
-    const currentComputedValue = curState?.value;
-    if (
-      currentComputedValue !== undefined &&
-      currentComputedValue !== getFieldValue(name)
-    ) {
-      setFieldsValue({
-        [name]: currentComputedValue,
-      });
-      return;
-    }
+    if (!!derivedPropsDef) {
+      const { curState, hasDiff } = this.derivedPropsResolver.synDerivedProps(
+        this.props
+      );
+      const currentComputedValue = curState?.value;
+      if (
+        currentComputedValue !== undefined &&
+        currentComputedValue !== getFieldValue(name)
+      ) {
+        setFieldValue(name, currentComputedValue);
+        return;
+      }
 
-    isRequiredToUpdate = isRequiredToUpdate || hasDiff;
+      isRequiredToUpdate = isRequiredToUpdate || hasDiff;
 
-    if (isRequiredToUpdate === false) {
-      return;
-    }
-    /**
-     * clean up input value
-     */
-    const fieldValue = getFieldValue(name);
-    const isRequiredToRender = curState?.renderIf;
-    if (fieldValue !== undefined && isRequiredToRender === false) {
-      delFieldValue(this);
-    }
+      if (isRequiredToUpdate === false) {
+        return;
+      }
 
+      /**
+       * clean up input value
+       */
+      const fieldValue = getFieldValue(name);
+      const isRequiredToRender = curState?.renderIf;
+      if (fieldValue !== undefined && isRequiredToRender === false) {
+        delFieldValue(this);
+      }
+    }
     if (isRequiredToUpdate) {
       this.forceUpdate();
     }
   };
 
   getDerivedProps = () =>
-    this.derivedPropsResolver?.getCurrentDerivedProps(this.props.__key__) ||
-    null;
+    this.derivedPropsResolver?.getCurrentDerivedProps(this.props.__key__);
 
   getControlled = () => {
     const { name, rule, children, derivedPropsDef, ...restProps } = this.props;
-    const { getFieldValue, setFieldsValue } = this.context;
+    const { getFieldValue, setFieldValue } = this.context;
     return {
       value: getFieldValue(name),
       onChange: (e) => {
         const newVal = e.target.value;
         // store set（name）
-        setFieldsValue({
-          [name]: newVal,
-        });
+        setFieldValue(name, newVal);
       },
       ...restProps,
     };
   };
 
   render() {
-    const derivedProps = this.getDerivedProps();
-    if (derivedProps == null) {
-      //for the first time, that the derivedPropsResolver has been initialized.
-      console.log("render null for '%s'", this.props.name);
-      return null;
+    const { name, children, derivedPropsDef } = this.props;
+    let updatedProps = this.getControlled();
+    if (derivedPropsDef === undefined) {
+      updatedProps = this.getControlled();
+    } else {
+      const derivedProps = this.getDerivedProps();
+      if (derivedProps === undefined) {
+        //for the first time, that the derivedPropsResolver has been initialized.
+        console.log("render null for '%s'", name);
+        return null;
+      }
+      const { renderIf, ...restDerivedProps } = derivedProps;
+      if (renderIf === false) {
+        console.log("render null for '%s'", name);
+        //doesn't render only when renderIf is false exactly, otherwise, if it's true or undefined, go ahead to render.
+        return null;
+      }
+      console.log("[re-]render '%s'", name);
+      updatedProps = { ...this.getControlled(), ...restDerivedProps };
     }
-    const { renderIf, ...restDerivedProps } = derivedProps;
-    if (renderIf === false) {
-      console.log("render null for '%s'", this.props.name);
-      //doesn't render only when renderIf is false exactly, otherwise, if it's true or undefined, go ahead to render.
-      return null;
-    }
-    console.log("[re-]render '%s'", this.props.name);
-    const updatedProps = { ...this.getControlled(), ...restDerivedProps };
-    const { children } = this.props;
     const returnChildNode = React.cloneElement(children, updatedProps);
     return returnChildNode;
   }

@@ -19,7 +19,7 @@ export interface FormInstance {
   getFieldValue: (name: NamePath) => StoreValue;
   delFieldValue: (name: NamePath) => void;
   //   getFieldsValue: this.getFieldsValue,
-  setFieldsValue: (value: Store) => void;
+  // setFieldsValue: (value: Store) => void;
   //   setFieldEntities: this.setFieldEntities,
   //   setCallbacks: this.setCallbacks,
   //   submit: this.submit,
@@ -80,7 +80,7 @@ export interface FormInstance {
   isFieldsValidating: (nameList: NamePath[]) => boolean;
   resetFields: (fields?: NamePath[]) => void;
   setFields: (fields: FieldData[]) => void;
-  setFieldsValue: (value: Store) => void;
+  // setFieldsValue: (value: Store) => void;
   validateFields: ValidateFields;
 
   // New API
