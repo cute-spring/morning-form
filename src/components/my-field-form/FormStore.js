@@ -72,9 +72,9 @@ export class FormStore {
     }
   };
 
-  notify = (keys) => {
+  notify = (fieldName) => {
     this.fieldEntities.forEach((entity) => {
-      entity.onStoreChange(keys);
+      entity.onStoreChange(fieldName);
     });
   };
 

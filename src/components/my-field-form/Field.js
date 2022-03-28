@@ -1,22 +1,16 @@
 import React, { Component } from "react";
 import FieldContext from "./FieldContext";
 import DerivedPropsResolver from "./DerivedPropsResolver";
-const _ = require("lodash");
-// const jexl = require("jexl");
 
 class Field extends Component {
   static contextType = FieldContext;
 
   derivedPropsResolver = null;
-  // constructor(props) {
-  //   super(props);
-  // To avoid being rendered first time (Mount) and then being hidden immediately caused by the derived props.
-  // }
 
   componentDidMount() {
     this.derivedPropsResolver = new DerivedPropsResolver(this.context);
     this.unregister = this.context.setFieldEntities(this);
-    this.onStoreChange([this.props.name]);
+    this.onStoreChange(this.props.name);
   }
 
   componentWillUnmount() {
@@ -88,12 +82,11 @@ class Field extends Component {
   render() {
     const { name, children, derivedPropsDef } = this.props;
     let updatedProps = this.getControlled();
-    if (derivedPropsDef === undefined) {
-      updatedProps = this.getControlled();
-    } else {
+    if (derivedPropsDef !== undefined) {
       const derivedProps = this.getDerivedProps();
       if (derivedProps === undefined) {
-        //for the first time, that the derivedPropsResolver has been initialized.
+        // The derivedPropsResolver is required to be initlized during the
+        // componentDidMount phase after the first render.
         console.log("render null for '%s'", name);
         return null;
       }
@@ -104,7 +97,7 @@ class Field extends Component {
         return null;
       }
       console.log("[re-]render '%s'", name);
-      updatedProps = { ...this.getControlled(), ...restDerivedProps };
+      updatedProps = { ...updatedProps, ...restDerivedProps };
     }
     const returnChildNode = React.cloneElement(children, updatedProps);
     return returnChildNode;
