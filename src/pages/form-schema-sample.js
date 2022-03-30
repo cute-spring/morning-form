@@ -137,12 +137,19 @@ const schema = {
             renderIf: "username == expectedUserName",
           },
           // array of rule or function
-          validate: [
-            {
-              rule: "", //jexl
-              message: "",
-            },
-          ],
+          validate: function (value) {
+            const pass =
+              /^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$/.test(
+                value
+              );
+            return pass ? [] : ["invalided password"];
+          },
+          // [
+          //   {
+          //     rule: "", //jexl
+          //     message: "",
+          //   },
+          // ],
         },
       },
     },

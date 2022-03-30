@@ -1,5 +1,9 @@
 import { Component } from "react";
-import { getComponentProxy, componentMapper } from "../components";
+import {
+  getComponentProxy,
+  processSchema,
+  componentMapper,
+} from "../components";
 import schema from "./form-schema-sample";
 // https://blog.csdn.net/u012961419/article/details/117031963
 // import { useFormik } from "formik";
@@ -26,9 +30,9 @@ validate – we pass the formValues object to this function, where you put valid
 errors – this object holds the error messages of various fields in value and message pair.
  */
 const initialValues = {};
+const processedSchema = processSchema(schema);
 const ComponentProxy = getComponentProxy({
   initialValues,
-  schema,
   componentMapper,
 });
 export default class MyRCFieldForm extends Component {
@@ -36,7 +40,7 @@ export default class MyRCFieldForm extends Component {
     return (
       <div>
         <h3>MyRCFieldForm</h3>
-        <ComponentProxy />
+        <ComponentProxy {...processedSchema} />
       </div>
     );
   }

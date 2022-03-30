@@ -76,8 +76,11 @@ class Field extends Component {
         setFieldValue(name, newVal);
       },
       onBlur: (e) => {
-        if (validateOnBlur) {
+        if (validateOnBlur && derivedPropsDef && derivedPropsDef.validate) {
+          const newVal = e.target.value;
+          const errors = derivedPropsDef.validate(newVal);
           console.info("validateOnBlur : %s", validateOnBlur);
+          console.info("errors : %s", errors);
         }
       },
       ...restProps,
