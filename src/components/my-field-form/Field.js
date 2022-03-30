@@ -67,13 +67,18 @@ class Field extends Component {
 
   getControlled = () => {
     const { name, rule, children, derivedPropsDef, ...restProps } = this.props;
-    const { getFieldValue, setFieldValue } = this.context;
+    const { getFieldValue, setFieldValue, validateOnBlur } = this.context;
     return {
       value: getFieldValue(name),
       onChange: (e) => {
         const newVal = e.target.value;
         // store set（name）
         setFieldValue(name, newVal);
+      },
+      onBlur: (e) => {
+        if (validateOnBlur) {
+          console.info("validateOnBlur : %s", validateOnBlur);
+        }
       },
       ...restProps,
     };

@@ -115,6 +115,7 @@ export class FormStore {
       setFieldEntities: this.setFieldEntities,
       setCallbacks: this.setCallbacks,
       submit: this.submit,
+      validateOnBlur: true,
     };
   };
 }

@@ -136,6 +136,13 @@ const schema = {
           computed: {
             renderIf: "username == expectedUserName",
           },
+          // array of rule or function
+          validate: [
+            {
+              rule: "", //jexl
+              message: "",
+            },
+          ],
         },
       },
     },
