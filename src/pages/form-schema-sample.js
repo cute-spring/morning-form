@@ -1,13 +1,9 @@
-import { FormStore } from "../components/my-field-form";
 import validationSchema from "./validationSchema";
-
-const formStore = new FormStore();
-const form = formStore.getForm();
 
 const schema = {
   type: "Form",
   props: {
-    form: form,
+    // form: form,
     validationSchema,
     // ref：this.formRef,
     onFinish: (val) => {

@@ -5,6 +5,8 @@ import {
   componentMapper,
 } from "../components";
 import schema from "./form-schema-sample";
+import FieldContext from "../components/my-field-form/FieldContext";
+import { FormStore } from "../components/my-field-form";
 // https://blog.csdn.net/u012961419/article/details/117031963
 // import { useFormik } from "formik";
 /**
@@ -35,12 +37,17 @@ const ComponentProxy = getComponentProxy({
   initialValues,
   componentMapper,
 });
+
+const formStore = new FormStore();
+const formInstance = formStore.getForm();
 export default class MyRCFieldForm extends Component {
   render() {
     return (
       <div>
         <h3>MyRCFieldForm</h3>
-        <ComponentProxy {...processedSchema} />
+        <FieldContext.Provider value={formInstance}>
+          <ComponentProxy {...processedSchema} />
+        </FieldContext.Provider>
       </div>
     );
   }

@@ -1,12 +1,13 @@
-import React from "react";
-import useForm from "./useForm";
+import React, { useContext } from "react";
+// import useForm from "./useForm";
 import FieldContext from "./FieldContext";
 
 export default function Form(
   { form, children, onFinish, onFinishFailed, validationSchema },
   ref
 ) {
-  const [formInstance] = useForm(form);
+  // const [formInstance] = useForm(form);
+  const formInstance = useContext(FieldContext);
 
   React.useImperativeHandle(ref, () => formInstance);
 
@@ -22,9 +23,9 @@ export default function Form(
         formInstance.submit();
       }}
     >
-      <FieldContext.Provider value={formInstance}>
-        {children}
-      </FieldContext.Provider>
+      {/* <FieldContext.Provider value={formInstance}> */}
+      {children}
+      {/* </FieldContext.Provider> */}
     </form>
   );
 }
