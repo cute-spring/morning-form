@@ -3,13 +3,12 @@ import React, { useContext } from "react";
 import FieldContext from "./FieldContext";
 
 export default function Form(
-  { form, children, onFinish, onFinishFailed, validationSchema },
+  { form, children, onFinish, onFinishFailed },
   ref
 ) {
-  // const [formInstance] = useForm(form);
   const formInstance = useContext(FieldContext);
 
-  React.useImperativeHandle(ref, () => formInstance);
+  // React.useImperativeHandle(ref, () => formInstance);
 
   formInstance.setCallbacks({
     onFinish,
