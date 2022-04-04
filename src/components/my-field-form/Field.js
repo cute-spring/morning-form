@@ -1,6 +1,18 @@
 import React, { Component } from "react";
 import FieldContext from "./FieldContext";
 import DerivedPropsResolver from "./DerivedPropsResolver";
+import {
+  date,
+  object,
+  string,
+  array,
+  mixed,
+  ref,
+  number,
+  boolean,
+  reach,
+  StringSchema,
+} from "yup";
 
 class Field extends Component {
   static contextType = FieldContext;
@@ -67,7 +79,20 @@ class Field extends Component {
 
   getControlled = () => {
     const { name, rule, children, derivedPropsDef, ...restProps } = this.props;
-    const { getFieldValue, setFieldValue, validateOnBlur } = this.context;
+    const { getFieldValue, setFieldValue, validateOnBlur, validationSchema } =
+      this.context;
+
+    const validateAt = async (path, value) => {
+      try {
+        const nestValidationSchema = reach(validationSchema, path);
+        await nestValidationSchema.validate(value);
+      } catch (e) {
+        // e.errors; // => ['Deve ser maior que 18']
+        console.error(e.errors);
+        return e.errors;
+      }
+      return [];
+    };
     return {
       value: getFieldValue(name),
       onChange: (e) => {
@@ -76,11 +101,16 @@ class Field extends Component {
         setFieldValue(name, newVal);
       },
       onBlur: (e) => {
-        if (validateOnBlur && derivedPropsDef && derivedPropsDef.validate) {
-          const newVal = e.target.value;
-          const errors = derivedPropsDef.validate(newVal);
-          console.info("validateOnBlur : %s", validateOnBlur);
-          console.info("errors : %s", errors);
+        if (validateOnBlur) {
+          if (derivedPropsDef && derivedPropsDef.validate) {
+            const newVal = e.target.value;
+            const errors = derivedPropsDef.validate(newVal);
+            console.info("validateOnBlur : %s", validateOnBlur);
+            console.info("errors : %s", errors);
+          } else {
+            const errorMsg = validateAt(name, e.target.value);
+            console.error(errorMsg);
+          }
         }
       },
       ...restProps,

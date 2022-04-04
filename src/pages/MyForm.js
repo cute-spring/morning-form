@@ -9,6 +9,7 @@ import FieldContext from "../components/my-field-form/FieldContext";
 import { FormStore } from "../components/my-field-form";
 // https://blog.csdn.net/u012961419/article/details/117031963
 // import { useFormik } from "formik";
+import validationSchema from "./validationSchema";
 /**
  
   const formik = useFormik({
@@ -31,15 +32,14 @@ touched – this object holds look over the various form fields which have been 
 validate – we pass the formValues object to this function, where you put validation of various fields, and populate the errors object accordingly.
 errors – this object holds the error messages of various fields in value and message pair.
  */
-const initialValues = {};
 const processedSchema = processSchema(schema);
 const ComponentProxy = getComponentProxy({
-  initialValues,
   componentMapper,
 });
 
+const initialValues = {};
 const formStore = new FormStore();
-const formInstance = formStore.getForm();
+const formInstance = formStore.getForm({ initialValues, validationSchema });
 export default class MyRCFieldForm extends Component {
   render() {
     return (

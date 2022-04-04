@@ -104,7 +104,8 @@ export class FormStore {
   getDerivedProps = (__key__) => {
     return this.derivedPropsByKey[__key__];
   };
-  getForm = () => {
+  getForm = ({ initialValues, validationSchema }) => {
+    this.validationSchema = validationSchema;
     return {
       setDerivedProps: this.setDerivedProps,
       getDerivedProps: this.getDerivedProps,
@@ -116,6 +117,7 @@ export class FormStore {
       setCallbacks: this.setCallbacks,
       submit: this.submit,
       validateOnBlur: true,
+      validationSchema: this.validationSchema,
     };
   };
 }

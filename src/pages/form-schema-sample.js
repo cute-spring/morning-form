@@ -1,10 +1,7 @@
-import validationSchema from "./validationSchema";
-
 const schema = {
   type: "Form",
   props: {
     // form: form,
-    validationSchema,
     // ref：this.formRef,
     onFinish: (val) => {
       console.log("onFinish", val, null, "\t"); //sy-log
