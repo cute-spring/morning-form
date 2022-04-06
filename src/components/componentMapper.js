@@ -2,15 +2,18 @@ import { v4 as uuidv4 } from "uuid";
 import Input from "./Input";
 import Form, { Field } from "./my-field-form";
 import Select from "./Select";
+import "./componentMapper.css";
 
 const wrapWithLabel = (Comp) => (props) => {
   const { label, meta, ...restProps } = props;
   const id = restProps.id || uuidv4();
+  const hasError = meta && meta.touched && !!meta.errors[0];
+  const wrapperClzName = `input-group ${hasError ? "error" : ""}`;
   return (
-    <div style={{ padding: "10px" }}>
+    <div style={{ padding: "10px" }} className={wrapperClzName}>
       <label htmlFor={id}>{label} : </label>
       <Comp {...restProps} id={id} />
-      {meta && meta.touched ? <div>{meta.errors}</div> : <div></div>}
+      {hasError ? <div className="error-message">{meta.errors}</div> : <></>}
     </div>
   );
 };
