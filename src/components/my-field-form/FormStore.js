@@ -123,6 +123,9 @@ export class FormStore {
     }
     try {
       await nestValidationSchema.validate(value);
+      meta.errors = [];
+      meta.touched = true;
+      handleError(meta);
     } catch (e) {
       meta.errors = e.errors;
       meta.touched = true;
