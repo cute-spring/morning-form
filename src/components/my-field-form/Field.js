@@ -1,18 +1,6 @@
 import React, { Component } from "react";
-import FieldContext from "./FieldContext";
 import DerivedPropsResolver from "./DerivedPropsResolver";
-import {
-  date,
-  object,
-  string,
-  array,
-  mixed,
-  ref,
-  number,
-  boolean,
-  reach,
-  StringSchema,
-} from "yup";
+import FieldContext from "./FieldContext";
 
 class Field extends Component {
   static contextType = FieldContext;
@@ -78,21 +66,17 @@ class Field extends Component {
     this.derivedPropsResolver?.getCurrentDerivedProps(this.props.__key__);
 
   getControlled = () => {
-    const { name, rule, children, derivedPropsDef, ...restProps } = this.props;
-    const { getFieldValue, setFieldValue, validateOnBlur, validationSchema } =
-      this.context;
-
-    const validateAt = async (path, value) => {
-      try {
-        const nestValidationSchema = reach(validationSchema, path);
-        await nestValidationSchema.validate(value);
-      } catch (e) {
-        // e.errors; // => ['Deve ser maior que 18']
-        console.error(e.errors);
-        return e.errors;
-      }
-      return [];
-    };
+    const { __key__, name, rule, children, derivedPropsDef, ...restProps } =
+      this.props;
+    const {
+      getFieldValue,
+      setFieldValue,
+      validateOnBlur,
+      // validationSchema,
+      validateAt,
+      getMeta,
+    } = this.context;
+    const meta = getMeta(__key__);
     return {
       value: getFieldValue(name),
       onChange: (e) => {
@@ -108,11 +92,16 @@ class Field extends Component {
             console.info("validateOnBlur : %s", validateOnBlur);
             console.info("errors : %s", errors);
           } else {
-            const errorMsg = validateAt(name, e.target.value);
-            console.error(errorMsg);
+            // need to consider the data structure of array
+            validateAt(__key__, name, e.target.value, (errorMsg) => {
+              console.error(errorMsg);
+              this.forceUpdate();
+            });
           }
         }
       },
+      meta,
+      __key__,
       ...restProps,
     };
   };

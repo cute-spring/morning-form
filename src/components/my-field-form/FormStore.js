@@ -1,4 +1,5 @@
 import produce from "immer";
+import { reach } from "yup";
 const _ = require("lodash");
 // store 状态管理库
 export class FormStore {
@@ -104,6 +105,31 @@ export class FormStore {
   getDerivedProps = (__key__) => {
     return this.derivedPropsByKey[__key__];
   };
+
+  getMeta = (__key__) => {
+    const meta = this.metaByKey[__key__] || {};
+    this.metaByKey[__key__] = meta;
+    return meta;
+  };
+
+  validateAt = async (__key__, path, value, handleError) => {
+    let meta = this.getMeta(__key__);
+    let nestValidationSchema = null;
+    try {
+      nestValidationSchema = reach(this.validationSchema, path);
+    } catch (e) {
+      //The schema does not contain the path:
+      return;
+    }
+    try {
+      await nestValidationSchema.validate(value);
+    } catch (e) {
+      meta.errors = e.errors;
+      meta.touched = true;
+      handleError(meta);
+    }
+  };
+
   getForm = ({ initialValues, validationSchema }) => {
     this.validationSchema = validationSchema;
     return {
@@ -118,6 +144,8 @@ export class FormStore {
       submit: this.submit,
       validateOnBlur: true,
       validationSchema: this.validationSchema,
+      validateAt: this.validateAt,
+      getMeta: this.getMeta,
     };
   };
 }
