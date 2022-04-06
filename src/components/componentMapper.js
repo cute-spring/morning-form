@@ -4,12 +4,13 @@ import Form, { Field } from "./my-field-form";
 import Select from "./Select";
 
 const wrapWithLabel = (Comp) => (props) => {
-  const { label, ...restProps } = props;
+  const { label, meta, ...restProps } = props;
   const id = restProps.id || uuidv4();
   return (
     <div style={{ padding: "10px" }}>
       <label htmlFor={id}>{label} : </label>
       <Comp {...restProps} id={id} />
+      {meta && meta.touched ? <div>{meta.errors}</div> : <div></div>}
     </div>
   );
 };
