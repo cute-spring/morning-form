@@ -1,19 +1,33 @@
 import { v4 as uuidv4 } from "uuid";
+import "./componentMapper.css";
 import Input from "./Input";
 import Form, { Field } from "./my-field-form";
 import Select from "./Select";
-import "./componentMapper.css";
+import clsx from "clsx";
 
 const wrapWithLabel = (Comp) => (props) => {
-  const { label, meta, ...restProps } = props;
+  const { label, meta, desc, ...restProps } = props;
   const id = restProps.id || uuidv4();
+  const descProps = {};
+  if (!!desc) {
+    descProps["aria-describedby"] = id + "_describedby";
+  }
+
   const hasError = meta && meta.touched && !!meta.errors[0];
-  const wrapperClzName = `input-group ${hasError ? "error" : ""}`;
+  const fieldClzName = clsx("form-control", hasError && "is-invalid");
   return (
-    <div style={{ padding: "10px" }} className={wrapperClzName}>
-      <label htmlFor={id}>{label} : </label>
-      <Comp {...restProps} id={id} />
-      {hasError ? <div className="error-message">{meta.errors}</div> : <></>}
+    <div class="mb-3">
+      <label htmlFor={id} class="form-label">
+        {label}
+      </label>
+      <Comp {...restProps} {...descProps} id={id} className={fieldClzName} />
+      {!!desc && (
+        <div id={descProps["aria-describedby"]} class="form-text">
+          {desc}
+        </div>
+      )}
+
+      {hasError ? <div className="invalid-feedback">{meta.errors}</div> : <></>}
     </div>
   );
 };
@@ -33,7 +47,11 @@ const LabelSelect = (props) => wrapWithLabel(Select)(props);
 const FieldSelect = (props) => wrapWithField(LabelSelect)(props);
 
 function Button() {
-  return <button>Submit</button>;
+  return (
+    <button type="submit" class="btn btn-primary">
+      Submit
+    </button>
+  );
 }
 
 const componentMapper = {

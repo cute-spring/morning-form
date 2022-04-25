@@ -8,7 +8,7 @@ class Select extends React.Component {
   render() {
     const { options, ...otherProps } = this.props;
     return (
-      <select {...otherProps}>
+      <select class="form-select" {...otherProps}>
         {options.map((item) => (
           <option key={`key-${item.key}`} value={item.key}>
             {item.text}

@@ -41,6 +41,8 @@ function DerivedPropsResolver({
       const { derivedPropsDef, name, __key__ } = props;
       let prevState = getDerivedProps(__key__);
       if (prevState === undefined) {
+        // it's required to return a empty state object even
+        // without the related derived prop definition.
         prevState = {};
         setDerivedProps(__key__, prevState);
       }

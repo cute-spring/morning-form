@@ -61,15 +61,15 @@ export class FormStore {
     return _.get(this.storeRef.ref, name);
   };
 
-  setFieldValue = (name, value) => {
+  setFieldValue = (namePath, value) => {
     const prevState = this.storeRef.ref;
     const curState = produce(prevState, (draft) => {
-      _.set(draft, name, value);
+      _.set(draft, namePath, value);
     });
     this.storeRef.ref = curState;
     if (prevState !== curState) {
       //TODO:
-      this.notify(name);
+      this.notify(namePath);
     }
   };
 
@@ -114,6 +114,11 @@ export class FormStore {
 
   validateAt = async (__key__, path, value, handleError) => {
     let meta = this.getMeta(__key__);
+    if (!this.validationSchema) {
+      meta.errors = [];
+      meta.touched = true;
+      handleError(meta);
+    }
     let nestValidationSchema = null;
     try {
       nestValidationSchema = reach(this.validationSchema, path);

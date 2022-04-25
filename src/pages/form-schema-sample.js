@@ -17,6 +17,7 @@ const schema = {
         name: "email",
         label: "Email",
         placeholder: "abc@xx.com",
+        desc: "We'll never share your email with anyone else.",
       },
       validate: {},
     },

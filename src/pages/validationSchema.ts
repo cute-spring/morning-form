@@ -80,7 +80,6 @@ const validate2 = async () => {
     const nestValidationSchema = reach(validationSchema, "company.email");
     await nestValidationSchema.validate("asdf@sdf.com");
     const confirmPassword = reach(validationSchema, "confirmPassword");
-    debugger;
     let schema = object({
       password: string(),
       isBig: boolean(),
@@ -105,7 +104,7 @@ const validate2 = async () => {
     });
     const birthDateSchema = reach(schema, "birthDate");
     console.log(birthDateSchema);
-    debugger;
+    // debugger;
   } catch (err) {
     // err.name; // => 'ValidationError'
     // err.errors; // => ['Deve ser maior que 18']

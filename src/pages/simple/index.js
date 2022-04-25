@@ -3,14 +3,12 @@ import {
   getComponentProxy,
   processSchema,
   componentMapper,
-} from "../components";
-import schema from "./form-schema-sample";
-import FieldContext from "../components/my-field-form/FieldContext";
-import { FormStore } from "../components/my-field-form";
+} from "../../components";
+import schema from "./schema";
+import { FormStore, FieldContext } from "../../components/my-field-form";
 // https://blog.csdn.net/u012961419/article/details/117031963
 // import { useFormik } from "formik";
 import validationSchema from "./validationSchema";
-import ThemeProvider from "react-bootstrap/ThemeProvider";
 /**
  
   const formik = useFormik({
@@ -44,13 +42,12 @@ const formInstance = formStore.getForm({ initialValues, validationSchema });
 export default class MyRCFieldForm extends Component {
   render() {
     return (
-      <ThemeProvider breakpoints={["xl", "lg"]}>
-        <div class="container">
-          <FieldContext.Provider value={formInstance}>
-            <ComponentProxy {...processedSchema} />
-          </FieldContext.Provider>
-        </div>
-      </ThemeProvider>
+      <div>
+        <h3>MyRCFieldForm</h3>
+        <FieldContext.Provider value={formInstance}>
+          <ComponentProxy {...processedSchema} />
+        </FieldContext.Provider>
+      </div>
     );
   }
 }

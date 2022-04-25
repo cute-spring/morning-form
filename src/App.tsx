@@ -1,5 +1,7 @@
 import { Routes, Route, Link } from "react-router-dom";
 import MyForm from "./pages/MyForm";
+import Simple from "./pages/simple";
+import PrefillData from "./pages/prefill-data";
 
 export default function App() {
   return (
@@ -9,6 +11,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="about" element={<About />} />
         <Route path="myform" element={<MyForm />} />
+        <Route path="/Simple" element={<Simple />} />
+        <Route path="/prefill-data" element={<PrefillData />} />
       </Routes>
     </div>
   );
@@ -24,7 +28,10 @@ function Home() {
       </main>
       <nav>
         <div>
-          <Link to="/about">About</Link>
+          <Link to="/prefill-data">prefill-data</Link>
+        </div>
+        <div>
+          <Link to="/Simple">Simple</Link>
         </div>
         <div>
           <Link to="/myform">myform</Link>
@@ -42,6 +49,9 @@ function About() {
         <p>That feels like an existential question, don't you think?</p>
       </main>
       <nav>
+        <div>
+          <Link to="/prefill-data">prefill-data</Link>
+        </div>
         <div>
           <Link to="/">Home</Link>
         </div>
